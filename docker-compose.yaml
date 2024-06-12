@@ -1,0 +1,9 @@
+services:
+  web:
+    build: .
+    container_name: rivet
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/rivet
+      - /rivet/node_modules

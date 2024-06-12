@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { ProfileState, makeFakeUserList } from './profileUtils'
+import { ProfileState } from './profileUtils'
 import { RootState } from '../../store';
 import { isArray } from 'lodash'
 
@@ -7,12 +7,6 @@ const initialState = {
   profiles: [],
   inFocus: null
 } as ProfileState;
-
-function returnFakeProfiles() {
-  const profiles = makeFakeUserList();
-  console.log('got some [fake] data', profiles);
-  return profiles;
-}
 
 async function returnNetworkProfiles() {
   const profiles = await fetch("https://codechallenge.rivet.work/api/v1/profile/1", {
@@ -35,7 +29,6 @@ async function returnNetworkProfiles() {
 
 
 export const fetchProfiles = createAsyncThunk('users/fetchUsers', () => {
-  // return returnFakeProfiles();
   return returnNetworkProfiles();
 })
 
@@ -47,7 +40,7 @@ export const profileSlice = createSlice({
       const id = action.payload;
       console.log('should set active profile ID', action.payload);
       
-      const found = state.profiles.find((item)=>item.id==id);
+      const found = state.profiles.find((item)=>item.id===id);
       state.inFocus = found || null;
       // state.settings.customTopics.topicsSortType.name = action.payload.name;   
     },
