@@ -1,12 +1,23 @@
 import { ProfileList } from './features/profile/ProfileList';
+import { ProfileShow } from './features/profile/ProfileShow';
 import { Box } from '@mui/material';
 import { Status } from './features/profile/Status';
+import { useState } from 'react';
 
 function App() {
 
+  const [newProfile, setNewProfile] = useState(false);
+
   function handleClickAdd() {
-    alert('Should add another profile!')
+    setNewProfile(true);
   }
+
+  const handleModalClose = () => {
+    if(newProfile) {
+      setNewProfile(false);
+    }
+  }
+
 
   return (
     <div className="App">
@@ -23,7 +34,7 @@ function App() {
                        cursor: 'pointer',
                        lineHeight: '1.2em'
                       }}
-                 onClick={()=>handleClickAdd()}>
+                 onClick={handleClickAdd}>
               ➕
             </Box>
           </Box>
@@ -31,6 +42,7 @@ function App() {
         </Box>
         <Box sx={{width: '32em', boxSizing: 'border-box', padding: '.5em', margin: '0 auto', maxWidth: '100%'}}>
           <ProfileList></ProfileList>
+          <ProfileShow open={newProfile} onClose={handleModalClose}></ProfileShow>
         </Box>
         <Status></Status>
       </header>

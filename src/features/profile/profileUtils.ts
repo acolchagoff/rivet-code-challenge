@@ -1,7 +1,8 @@
 import fakeUsers from './fakeUsers.json';
+import store from '../../store';
 
 type Profile = {
-    "id": number,
+    "id"?: number | null,
     "first_name": string, // 255 char max / required",
     "last_name": string, // 255 char max / required",
     "phone": string, // 255 char max / required",
@@ -14,9 +15,15 @@ type Profile = {
     "notes": string, // 4GB max"
 }
 
+type AppDispatch = typeof store.dispatch
+
 type ProfileState = {
   profiles: Profile[];
   inFocus: Profile | null;
+}
+
+type ProfileError = {
+  errors: {value: string, msg: string, param: string, location: string}[]
 }
 
 const makeFakeUserList = ():Profile[] => {
@@ -45,4 +52,6 @@ export {
   makeFakeUserList,
   type Profile,
   type ProfileState,
+  type ProfileError,
+  type AppDispatch
 }
