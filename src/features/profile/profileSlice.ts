@@ -35,16 +35,7 @@ export const fetchProfiles = createAsyncThunk('users/fetchUsers', () => {
 export const profileSlice = createSlice({
   name: 'profiles',
   initialState,
-  reducers: {
-    setActiveProfile: (state, action) => {
-      const id = action.payload;
-      console.log('should set active profile ID', action.payload);
-      
-      const found = state.profiles.find((item)=>item.id===id);
-      state.inFocus = found || null;
-      // state.settings.customTopics.topicsSortType.name = action.payload.name;   
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder.addCase(fetchProfiles.fulfilled, (state, action) => {
       return {
@@ -56,9 +47,7 @@ export const profileSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setActiveProfile } = profileSlice.actions
 export const profileList = (state: RootState) => state.profile.profiles;
 export const countProfiles = (state: RootState) => state.profile.profiles.length as number;
-export const currentProfile = (state: RootState) => state.profile.inFocus;
 
 export default profileSlice.reducer
