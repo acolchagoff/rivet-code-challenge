@@ -1,6 +1,6 @@
 import { ProfileList } from './features/profile/ProfileList';
 import { ProfileShow } from './features/profile/ProfileShow';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { Status } from './features/profile/Status';
 import { useState } from 'react';
 
@@ -24,19 +24,16 @@ function App() {
       <header className="App-header" style={{textAlign: 'center'}}>
         <Box>
           <Box sx={{   boxSizing: 'border-box', width: '32em', padding: '.5em', margin: '0 auto', maxWidth: '100%', position: 'absolute', left: 0, right: 0 }}>
-            <Box sx={{ border: '1px solid gray',
+            <Button sx={{ border: '1px solid gray',
                        backgroundColor: 'white', 
-                       padding: '.5em', 
                        width: '1em', 
-                       height: '1em', 
+                       height: '2em', 
                        float: 'right', 
                        borderRadius: '4px',
-                       cursor: 'pointer',
-                       lineHeight: '1.2em'
                       }}
                  onClick={handleClickAdd}>
-              ➕
-            </Box>
+              &#x2795;New
+            </Button>
           </Box>
           <h1>Welcome to Rivet</h1>
         </Box>
