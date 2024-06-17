@@ -44,3 +44,26 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+## Docker
+
+To run in docker Development mode you will need to install docker and docker-compose. More information on this at the docker website [Here](https://docs.docker.com/get-docker/)
+
+### Running Server in local docker
+
+In order to build, run, and develop the application in docker locally run the following command: `docker-compose up --build`
+
+This command will do the following:
+- Create a docker image for the application to run in
+- load the image into a docker comtainer
+- run the application in said docker container
+- watch the codebase and copy all changes into the docker container as they are made.
+
+Once you have run this once, you can comit the `--build` flag for faster startup time, it will only be necessary when something about the environment changes such has the linux base image or package.json.
+
+### Testing
+
+In order to test run the following command: `docker-compose run web npm test`
+
+This command will run tests in the same docker container created by the command above.

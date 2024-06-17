@@ -1,16 +1,10 @@
 import { Box, Stack } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { ProfileLineItem } from "./ProfileLineItem";
-import { profileList, setActiveProfile } from "./profileSlice";
+import { profileList } from "./profileSlice";
 
 const ProfileList = () => {
   const profiles = useSelector(profileList)
-  const dispatch = useDispatch();
-
-  function trySetProfile(data: number) {
-    dispatch(setActiveProfile(data));
-    alert(`Should view profile id: ${data}`)
-  }
 
   return (
     <Stack spacing={1} sx={{textAlign: 'left'}}>
@@ -21,8 +15,7 @@ const ProfileList = () => {
                    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, .1)',
                    cursor: 'pointer'
                   }} 
-             key={profile.id} 
-             onClick={()=>trySetProfile(profile.id)}>
+             key={profile.id}>
           <ProfileLineItem profile={profile} />
         </Box>
       ))}

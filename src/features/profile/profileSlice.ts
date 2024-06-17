@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { ProfileState, makeFakeUserList } from './profileUtils'
+import { ProfileState, Profile, ProfileError} from './profileUtils'
 import { RootState } from '../../store';
 import { isArray } from 'lodash'
 
@@ -8,14 +8,11 @@ const initialState = {
   inFocus: null
 } as ProfileState;
 
-function returnFakeProfiles() {
-  const profiles = makeFakeUserList();
-  console.log('got some [fake] data', profiles);
-  return profiles;
-}
+
+const RIVET_API_DOMAIN = 'https://codechallenge.rivet.work/api/v1';
 
 async function returnNetworkProfiles() {
-  const profiles = await fetch("https://codechallenge.rivet.work/api/v1/profile/1", {
+  const profiles = await fetch(`${RIVET_API_DOMAIN}/profiles`, {
     headers: {
       "token": process.env.REACT_APP_API_TOKEN || ''
     }
@@ -26,7 +23,6 @@ async function returnNetworkProfiles() {
     return data;
   })
 
-  console.log('got some data', profiles);
   if (isArray(profiles)) {
     return profiles;
   }
@@ -35,37 +31,88 @@ async function returnNetworkProfiles() {
 
 
 export const fetchProfiles = createAsyncThunk('users/fetchUsers', () => {
-  // return returnFakeProfiles();
   return returnNetworkProfiles();
 })
+
+export const createProfile = createAsyncThunk('users/createProfile', async (profile: Profile, thunkApi) => {
+  const newProfile:Profile = await fetch(`${RIVET_API_DOMAIN}/profile`, {
+    headers: {
+      "token": process.env.REACT_APP_API_TOKEN || '',
+      "Content-Type": "application/json"
+    },
+    method: 'POST',
+    body: JSON.stringify(profile)
+  })
+  .then(async (response) => {
+    if (response.status === 422) {
+      // Return the known error for future handling
+      return thunkApi.rejectWithValue((await response.json()) as ProfileError)
+    }
+    return response.json()
+  })
+  .then((data) => {
+    return data;
+  });
+  return newProfile;
+});
+
+export const updateProfile = createAsyncThunk('users/updateProfile', async (profile: Profile, thunkApi) => {
+  const updatedProfile = await fetch(`${RIVET_API_DOMAIN}/profile/${profile.id}`, {
+    headers: {
+      "token": process.env.REACT_APP_API_TOKEN || '',
+      "Content-Type": "application/json"
+    },
+    method: 'PUT',
+    body: JSON.stringify(profile)
+  })
+  .then(async (response) => {
+  if (response.status === 422) {
+    // Return the known error for future handling
+    return thunkApi.rejectWithValue((await response.json()) as ProfileError)
+  }
+    return response.json()
+  })
+  .then((data) => {
+    return data;
+  });
+  return updatedProfile;
+});
 
 export const profileSlice = createSlice({
   name: 'profiles',
   initialState,
-  reducers: {
-    setActiveProfile: (state, action) => {
-      const id = action.payload;
-      console.log('should set active profile ID', action.payload);
-      
-      const found = state.profiles.find((item)=>item.id==id);
-      state.inFocus = found || null;
-      // state.settings.customTopics.topicsSortType.name = action.payload.name;   
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder.addCase(fetchProfiles.fulfilled, (state, action) => {
       return {
         ...state,
         profiles: action.payload
       }
-    })
+    });
+    builder.addCase(createProfile.fulfilled, (state, action) => {
+      return {
+        ...state,
+        profiles: state.profiles.concat(action.payload)
+      }
+    });
+    builder.addCase(createProfile.rejected, (state, action) => {
+      console.error('createProfile failed', action.error.message);
+    });
+    builder.addCase(updateProfile.fulfilled, (state, action) => {
+      const updatedProfile = action.payload;
+      const index = state.profiles.findIndex((profile)=>profile.id === updatedProfile.id);
+      if(index > -1) {
+        state.profiles[index] = updatedProfile;
+      }
+    });
+    builder.addCase(updateProfile.rejected, (state, action) => {
+      console.error('updateProfile failed', action.error.message);
+    });
   }
 })
 
 // Action creators are generated for each case reducer function
-export const { setActiveProfile } = profileSlice.actions
 export const profileList = (state: RootState) => state.profile.profiles;
 export const countProfiles = (state: RootState) => state.profile.profiles.length as number;
-export const currentProfile = (state: RootState) => state.profile.inFocus;
 
 export default profileSlice.reducer

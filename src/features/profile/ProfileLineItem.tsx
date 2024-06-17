@@ -1,5 +1,7 @@
 import { Box, Stack } from "@mui/material";
 import { Profile } from "./profileUtils";
+import { ProfileShow } from "./ProfileShow";
+import { useState } from "react";
 
 type ProfileLineItemArgs = {
   profile: Profile;
@@ -11,9 +13,19 @@ const ProfileLineItem = ({
 
   const hasPhoto = !!profile.photo;
   const spectrum = 'linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%), linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%), linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%)';
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const handleModalClose = () => {
+    setModalIsOpen(false);
+  }
+
+  const handleClick = () => {
+    setModalIsOpen(true);
+  }
 
   return (
-    <Stack direction={'row'} spacing={1}>
+    <>
+    <Stack direction={'row'} spacing={1} onClick={handleClick}>
       { hasPhoto && (
         <Box sx={{
           width: '5em', 
@@ -38,6 +50,8 @@ const ProfileLineItem = ({
         <Box>{profile.email} - {profile.phone} </Box>
       </Stack>
     </Stack>
+    <ProfileShow open={modalIsOpen} onClose={handleModalClose} profile={profile} ></ProfileShow>
+    </>
   )
 }
 
